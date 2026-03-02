@@ -16,21 +16,25 @@ export async function GET() {
     // Read B3:C11 — budget summary + category totals
     const values = await readSheetRange(session.accessToken, tabName, "B3:C11");
 
-    const parse = (rowIdx: number) =>
-      parseFloat(String(values?.[rowIdx]?.[1] ?? 0)) || 0;
+    // Look up values by label (col B) to avoid row-order assumptions
+    const findByLabel = (label: string): number => {
+      const row = values?.find(
+        (r) => String(r?.[0] ?? "").trim().toLowerCase() === label.toLowerCase()
+      );
+      return parseFloat(String(row?.[1] ?? 0)) || 0;
+    };
 
     const summary: MonthlySummary = {
       month: tabName,
-      budget: parse(0), // row 3 = index 0
-      used: parse(1),   // row 4 = index 1
-      left: parse(2),   // row 5 = index 2
+      budget: findByLabel("Budget"),
+      used: findByLabel("Used"),
+      left: findByLabel("Left"),
       categories: [
-        // rows 7-11 = indices 4-8 (row 6 is blank)
-        { letter: "F" as CategoryLetter, name: "Food",         total: parse(4) },
-        { letter: "S" as CategoryLetter, name: "Subscription", total: parse(5) },
-        { letter: "C" as CategoryLetter, name: "Chulsu",       total: parse(6) },
-        { letter: "P" as CategoryLetter, name: "Personal",     total: parse(7) },
-        { letter: "O" as CategoryLetter, name: "Others",       total: parse(8) },
+        { letter: "F" as CategoryLetter, name: "Food",         total: findByLabel("Food") },
+        { letter: "S" as CategoryLetter, name: "Subscription", total: findByLabel("Subscription") },
+        { letter: "C" as CategoryLetter, name: "Chulsu",       total: findByLabel("Chulsu") },
+        { letter: "P" as CategoryLetter, name: "Personal",     total: findByLabel("Personal") },
+        { letter: "O" as CategoryLetter, name: "Others",       total: findByLabel("Others") },
       ],
     };
 
