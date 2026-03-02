@@ -3,37 +3,42 @@ export type CategoryLetter = (typeof CATEGORY_LETTERS)[number];
 
 export const CATEGORIES: Record<
   CategoryLetter,
-  { name: string; badgeBg: string; badgeText: string; barColor: string }
+  { name: string; bgColor: string; textColor: string; borderColor: string; barColor: string }
 > = {
   F: {
     name: "Food",
-    badgeBg: "bg-green-900/40",
-    badgeText: "text-green-300",
-    barColor: "bg-green-500",
+    bgColor: "bg-green-100",
+    textColor: "text-green-800",
+    borderColor: "border-green-300",
+    barColor: "bg-green-400",
   },
   S: {
     name: "Subscription",
-    badgeBg: "bg-blue-900/40",
-    badgeText: "text-blue-300",
-    barColor: "bg-blue-500",
+    bgColor: "bg-blue-100",
+    textColor: "text-blue-800",
+    borderColor: "border-blue-300",
+    barColor: "bg-blue-400",
   },
   C: {
     name: "Chulsu",
-    badgeBg: "bg-purple-900/40",
-    badgeText: "text-purple-300",
-    barColor: "bg-purple-500",
+    bgColor: "bg-purple-100",
+    textColor: "text-purple-800",
+    borderColor: "border-purple-300",
+    barColor: "bg-purple-400",
   },
   P: {
     name: "Personal",
-    badgeBg: "bg-orange-900/40",
-    badgeText: "text-orange-300",
-    barColor: "bg-orange-500",
+    bgColor: "bg-orange-100",
+    textColor: "text-orange-800",
+    borderColor: "border-orange-300",
+    barColor: "bg-orange-400",
   },
   O: {
     name: "Others",
-    badgeBg: "bg-zinc-700/60",
-    badgeText: "text-zinc-300",
-    barColor: "bg-zinc-400",
+    bgColor: "bg-gray-100",
+    textColor: "text-gray-600",
+    borderColor: "border-gray-300",
+    barColor: "bg-gray-400",
   },
 };
 
