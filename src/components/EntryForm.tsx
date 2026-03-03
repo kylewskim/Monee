@@ -57,97 +57,104 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex flex-col gap-4"
-    >
-      <h2 className="text-sm font-semibold uppercase tracking-widest text-zinc-400">
+    <div className="flex flex-col gap-2">
+      <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 px-1">
         Add Entry
       </h2>
 
-      {/* Date */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs text-zinc-500">Date</label>
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          required
-          className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-zinc-400 transition-colors [color-scheme:dark]"
-        />
-      </div>
-
-      {/* Source */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs text-zinc-500">Where</label>
-        <input
-          type="text"
-          value={source}
-          onChange={(e) => setSource(e.target.value)}
-          placeholder="e.g. Starbucks"
-          required
-          autoComplete="off"
-          className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-zinc-400 transition-colors"
-        />
-      </div>
-
-      {/* Category */}
-      <div className="flex flex-col gap-2">
-        <label className="text-xs text-zinc-500">Category</label>
-        <div className="flex gap-2 flex-wrap">
-          {CATEGORY_LETTERS.map((letter) => (
-            <button
-              key={letter}
-              type="button"
-              onClick={() => setCategory(letter)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-full border text-sm font-medium transition-all ${
-                category === letter
-                  ? "bg-white text-black border-white"
-                  : "bg-transparent border-zinc-700 text-zinc-400 hover:border-zinc-500"
-              }`}
-            >
-              <CategoryBadge letter={letter} />
-              <span>{CATEGORIES[letter].name}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Amount */}
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs text-zinc-500">Amount ($)</label>
-        <input
-          type="number"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="0.00"
-          step="0.01"
-          min="0"
-          required
-          inputMode="decimal"
-          className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white text-sm placeholder:text-zinc-600 focus:outline-none focus:border-zinc-400 transition-colors"
-        />
-      </div>
-
-      {/* Submit */}
-      <button
-        type="submit"
-        disabled={loading}
-        className="bg-white text-black font-semibold rounded-full py-3 text-sm active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-4"
       >
-        {loading ? "Saving..." : "Add"}
-      </button>
+        {/* Date + Where row */}
+        <div className="flex gap-2">
+          <div className="flex flex-col gap-1.5 w-36 flex-shrink-0">
+            <label className="text-xs text-gray-400">Date</label>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
+              className="bg-gray-50 border border-gray-200 rounded-xl px-3 h-11 text-gray-900 text-sm focus:outline-none focus:border-gray-400 transition-colors [color-scheme:light]"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5 flex-1">
+            <label className="text-xs text-gray-400">Where</label>
+            <input
+              type="text"
+              value={source}
+              onChange={(e) => setSource(e.target.value)}
+              placeholder="e.g. Starbucks"
+              required
+              autoComplete="off"
+              className="bg-gray-50 border border-gray-200 rounded-xl px-4 h-11 text-gray-900 text-sm placeholder:text-gray-400 focus:outline-none focus:border-gray-400 transition-colors"
+            />
+          </div>
+        </div>
 
-      {/* Feedback */}
-      {feedback && (
-        <p
-          className={`text-sm text-center font-medium ${
-            feedback.ok ? "text-green-400" : "text-red-400"
-          }`}
+        {/* Category */}
+        <div className="flex flex-col gap-2">
+          <label className="text-xs text-gray-400">Category</label>
+          <div className="flex gap-2 flex-wrap">
+            {CATEGORY_LETTERS.map((letter) => {
+              const cat = CATEGORIES[letter];
+              const isSelected = category === letter;
+              return (
+                <button
+                  key={letter}
+                  type="button"
+                  onClick={() => setCategory(letter)}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-full border text-sm font-medium transition-all"
+                  style={
+                    isSelected
+                      ? { backgroundColor: cat.color, color: cat.textColor, borderColor: cat.color }
+                      : { backgroundColor: "white", color: "#9ca3af", borderColor: "#e5e7eb" }
+                  }
+                >
+                  <CategoryBadge letter={letter} />
+                  <span>{cat.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Amount */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs text-gray-400">Amount ($)</label>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="0.00"
+            step="0.01"
+            min="0"
+            required
+            inputMode="decimal"
+            className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 text-sm placeholder:text-gray-400 focus:outline-none focus:border-gray-400 transition-colors"
+          />
+        </div>
+
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-gray-900 text-white font-semibold rounded-full py-3 text-sm active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {feedback.msg}
-        </p>
-      )}
-    </form>
+          {loading ? "Saving..." : "Add"}
+        </button>
+
+        {/* Feedback */}
+        {feedback && (
+          <p
+            className={`text-sm text-center font-medium ${
+              feedback.ok ? "text-green-600" : "text-red-500"
+            }`}
+          >
+            {feedback.msg}
+          </p>
+        )}
+      </form>
+    </div>
   );
 }

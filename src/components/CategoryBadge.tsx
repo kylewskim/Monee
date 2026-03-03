@@ -18,7 +18,8 @@ export default function CategoryBadge({
 
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full font-medium ${sizeClass} ${cat.badgeBg} ${cat.badgeText}`}
+      className={`inline-flex items-center gap-1 rounded-full font-medium ${sizeClass}`}
+      style={{ backgroundColor: cat.color, color: cat.textColor }}
     >
       <span className="font-bold">{letter}</span>
       {showName && <span>{cat.name}</span>}

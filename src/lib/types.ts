@@ -3,38 +3,13 @@ export type CategoryLetter = (typeof CATEGORY_LETTERS)[number];
 
 export const CATEGORIES: Record<
   CategoryLetter,
-  { name: string; badgeBg: string; badgeText: string; barColor: string }
+  { name: string; color: string; textColor: string }
 > = {
-  F: {
-    name: "Food",
-    badgeBg: "bg-green-900/40",
-    badgeText: "text-green-300",
-    barColor: "bg-green-500",
-  },
-  S: {
-    name: "Subscription",
-    badgeBg: "bg-blue-900/40",
-    badgeText: "text-blue-300",
-    barColor: "bg-blue-500",
-  },
-  C: {
-    name: "Chulsu",
-    badgeBg: "bg-purple-900/40",
-    badgeText: "text-purple-300",
-    barColor: "bg-purple-500",
-  },
-  P: {
-    name: "Personal",
-    badgeBg: "bg-orange-900/40",
-    badgeText: "text-orange-300",
-    barColor: "bg-orange-500",
-  },
-  O: {
-    name: "Others",
-    badgeBg: "bg-zinc-700/60",
-    badgeText: "text-zinc-300",
-    barColor: "bg-zinc-400",
-  },
+  F: { name: "Food",         color: "#AAE3CC", textColor: "#1c5e42" },
+  S: { name: "Subscription", color: "#C5DBFB", textColor: "#1a3d8a" },
+  C: { name: "Chulsu",       color: "#EFD0DD", textColor: "#7a2d4c" },
+  P: { name: "Personal",     color: "#FFE4CA", textColor: "#7c3a08" },
+  O: { name: "Others",       color: "#EFEFEF", textColor: "#404040" },
 };
 
 export interface CategorySummary {

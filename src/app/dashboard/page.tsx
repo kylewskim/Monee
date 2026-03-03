@@ -1,6 +1,6 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import useSWR from "swr";
@@ -8,7 +8,6 @@ import BudgetSummary from "@/components/BudgetSummary";
 import CategoryBreakdown from "@/components/CategoryBreakdown";
 import EntryForm from "@/components/EntryForm";
 import type { MonthlySummary } from "@/lib/types";
-import Image from "next/image";
 
 const fetcher = (url: string) =>
   fetch(url).then((r) => {
@@ -41,29 +40,8 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white pb-safe">
+    <main className="min-h-screen bg-gray-50 text-gray-900 pb-safe">
       <div className="max-w-md mx-auto px-4 pt-6 pb-10 flex flex-col gap-6">
-        {/* Header */}
-        <header className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-              <Image src="/icons/icon.svg" alt="Monee" width={20} height={20} />
-            </div>
-            <span className="font-bold text-lg tracking-tight">Monee</span>
-          </div>
-          <div className="flex items-center gap-3">
-            {summary && (
-              <span className="text-xs text-zinc-500 font-medium">{summary.month}</span>
-            )}
-            <button
-              onClick={() => signOut({ callbackUrl: "/auth/signin" })}
-              className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors"
-            >
-              Sign out
-            </button>
-          </div>
-        </header>
-
         {/* Budget Summary */}
         {isLoading ? (
           <SummarySkeleton />
@@ -91,8 +69,8 @@ export default function DashboardPage() {
 
 function LoadingScreen() {
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
-      <div className="w-5 h-5 border-2 border-zinc-700 border-t-white rounded-full animate-spin" />
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="w-5 h-5 border-2 border-gray-200 border-t-gray-600 rounded-full animate-spin" />
     </div>
   );
 }
@@ -101,7 +79,7 @@ function SummarySkeleton() {
   return (
     <div className="flex gap-2">
       {[0, 1, 2].map((i) => (
-        <div key={i} className="flex-1 h-20 bg-zinc-900 rounded-2xl animate-pulse" />
+        <div key={i} className="flex-1 h-20 bg-gray-200 rounded-2xl animate-pulse" />
       ))}
     </div>
   );
@@ -109,11 +87,11 @@ function SummarySkeleton() {
 
 function ErrorCard({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex flex-col gap-3 items-center text-center">
-      <p className="text-zinc-400 text-sm">Couldn&apos;t load budget data.</p>
+    <div className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-3 items-center text-center">
+      <p className="text-gray-500 text-sm">Couldn&apos;t load budget data.</p>
       <button
         onClick={onRetry}
-        className="text-xs bg-zinc-800 hover:bg-zinc-700 text-white rounded-full px-4 py-2 transition-colors"
+        className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full px-4 py-2 transition-colors"
       >
         Retry
       </button>
