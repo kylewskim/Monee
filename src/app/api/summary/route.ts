@@ -14,8 +14,8 @@ export async function GET(request: Request) {
   const tabName = searchParams.get("month") || getCurrentTabName();
 
   try {
-    // Read B3:C11 — budget summary + category totals
-    const values = await readSheetRange(session.accessToken, tabName, "B3:C11");
+    // Read B4:C12 — budget summary + category totals
+    const values = await readSheetRange(session.accessToken, tabName, "B4:C12");
 
     // Find the first numeric value in the row, regardless of which column it's in
     const parse = (rowIdx: number): number => {
@@ -29,11 +29,11 @@ export async function GET(request: Request) {
 
     const summary: MonthlySummary = {
       month: tabName,
-      budget: parse(0), // row 3 = index 0
-      used: parse(1),   // row 4 = index 1
-      left: parse(2),   // row 5 = index 2
+      budget: parse(0), // row 4 = index 0
+      used: parse(1),   // row 5 = index 1
+      left: parse(2),   // row 6 = index 2
       categories: [
-        // rows 7-11 = indices 4-8 (row 6 is blank)
+        // rows 8-12 = indices 4-8 (row 7 is blank)
         { letter: "F" as CategoryLetter, name: "Food",         total: parse(4) },
         { letter: "S" as CategoryLetter, name: "Subscription", total: parse(5) },
         { letter: "C" as CategoryLetter, name: "Chulsu",       total: parse(6) },
