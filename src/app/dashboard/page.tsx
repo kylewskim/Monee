@@ -15,6 +15,17 @@ const fetcher = (url: string) =>
     return r.json();
   });
 
+const MONTH_NAMES: Record<string, string> = {
+  Jan: "January", Feb: "February", Mar: "March",    Apr: "April",
+  May: "May",     Jun: "June",     Jul: "July",     Aug: "August",
+  Sep: "September", Oct: "October", Nov: "November", Dec: "December",
+};
+
+function formatMonth(tabName: string): string {
+  const [mon, year] = tabName.split("/");
+  return `${MONTH_NAMES[mon] ?? mon} ${year}`;
+}
+
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -43,17 +54,22 @@ export default function DashboardPage() {
     <main className="min-h-screen bg-gray-50 text-gray-900 pb-safe">
       <div className="max-w-md mx-auto px-4 pt-6 pb-10 flex flex-col gap-6">
         {/* Budget Summary */}
-        {isLoading ? (
-          <SummarySkeleton />
-        ) : error ? (
-          <ErrorCard onRetry={() => mutate()} />
-        ) : summary ? (
-          <BudgetSummary
-            budget={summary.budget}
-            used={summary.used}
-            left={summary.left}
-          />
-        ) : null}
+        <div className="flex flex-col gap-2">
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 px-1">
+            {summary ? formatMonth(summary.month) : "\u00a0"}
+          </h2>
+          {isLoading ? (
+            <SummarySkeleton />
+          ) : error ? (
+            <ErrorCard onRetry={() => mutate()} />
+          ) : summary ? (
+            <BudgetSummary
+              budget={summary.budget}
+              used={summary.used}
+              left={summary.left}
+            />
+          ) : null}
+        </div>
 
         {/* Category Breakdown */}
         {summary && summary.categories.some((c) => c.total > 0) && (
