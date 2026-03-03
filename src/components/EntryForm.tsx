@@ -8,6 +8,13 @@ interface EntryFormProps {
   onSuccess: () => void;
 }
 
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 function todayLocal(): string {
   const d = new Date();
   const yyyy = d.getFullYear();
@@ -107,7 +114,7 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
                   className="flex items-center gap-1.5 px-3 py-2 rounded-full border text-sm font-medium transition-all"
                   style={
                     isSelected
-                      ? { backgroundColor: cat.color, color: cat.textColor, borderColor: cat.color }
+                      ? { backgroundColor: hexToRgba(cat.color, 0.4), color: cat.textColor, borderColor: cat.color }
                       : { backgroundColor: "white", color: "#9ca3af", borderColor: "#e5e7eb" }
                   }
                 >
