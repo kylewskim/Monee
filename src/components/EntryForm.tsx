@@ -74,7 +74,7 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
         className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-4"
       >
         {/* Date */}
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-1.5 overflow-hidden">
           <label className="text-xs text-gray-400">Date</label>
           <input
             type="date"
