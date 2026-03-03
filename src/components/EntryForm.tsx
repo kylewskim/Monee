@@ -73,30 +73,30 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
         onSubmit={handleSubmit}
         className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-4"
       >
-        {/* Date + Where row */}
-        <div className="flex gap-2">
-          <div className="flex flex-col gap-1.5 w-36 flex-shrink-0">
-            <label className="text-xs text-gray-400">Date</label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              required
-              className="bg-gray-50 border border-gray-200 rounded-xl px-3 h-11 text-gray-900 text-sm focus:outline-none focus:border-gray-400 transition-colors [color-scheme:light]"
-            />
-          </div>
-          <div className="flex flex-col gap-1.5 flex-1">
-            <label className="text-xs text-gray-400">Where</label>
-            <input
-              type="text"
-              value={source}
-              onChange={(e) => setSource(e.target.value)}
-              placeholder="e.g. Starbucks"
-              required
-              autoComplete="off"
-              className="bg-gray-50 border border-gray-200 rounded-xl px-4 h-11 text-gray-900 text-sm placeholder:text-gray-400 focus:outline-none focus:border-gray-400 transition-colors"
-            />
-          </div>
+        {/* Date */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs text-gray-400">Date</label>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            required
+            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 h-11 text-gray-900 text-sm focus:outline-none focus:border-gray-400 transition-colors [color-scheme:light]"
+          />
+        </div>
+
+        {/* Where */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs text-gray-400">Where</label>
+          <input
+            type="text"
+            value={source}
+            onChange={(e) => setSource(e.target.value)}
+            placeholder="e.g. Starbucks"
+            required
+            autoComplete="off"
+            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 h-11 text-gray-900 text-sm placeholder:text-gray-400 focus:outline-none focus:border-gray-400 transition-colors"
+          />
         </div>
 
         {/* Category */}
