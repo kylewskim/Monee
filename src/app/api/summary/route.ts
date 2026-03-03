@@ -4,20 +4,28 @@ import { readSheetRange } from "@/lib/googleSheets";
 import { getCurrentTabName } from "@/lib/sheetAlgorithm";
 import type { MonthlySummary, CategoryLetter } from "@/lib/types";
 
-export async function GET() {
+export async function GET(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.accessToken) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const tabName = getCurrentTabName();
+  const { searchParams } = new URL(request.url);
+  const tabName = searchParams.get("month") || getCurrentTabName();
 
   try {
     // Read B3:C11 — budget summary + category totals
     const values = await readSheetRange(session.accessToken, tabName, "B3:C11");
 
-    const parse = (rowIdx: number) =>
-      parseFloat(String(values?.[rowIdx]?.[1] ?? 0)) || 0;
+    // Find the first numeric value in the row, regardless of which column it's in
+    const parse = (rowIdx: number): number => {
+      const row = values?.[rowIdx] ?? [];
+      for (const cell of row) {
+        const n = parseFloat(String(cell ?? ""));
+        if (!isNaN(n)) return n;
+      }
+      return 0;
+    };
 
     const summary: MonthlySummary = {
       month: tabName,
