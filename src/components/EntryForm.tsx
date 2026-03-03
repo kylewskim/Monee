@@ -65,7 +65,7 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 px-1">
+      <h2 className="text-sm font-medium text-gray-500 px-1">
         Add Entry
       </h2>
 
@@ -75,7 +75,7 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
       >
         {/* Date */}
         <div className="flex flex-col gap-1.5 overflow-hidden">
-          <label className="text-xs text-gray-400">Date</label>
+          <label className="text-xs text-gray-400 font-medium">Date</label>
           <input
             type="date"
             value={date}
@@ -87,7 +87,7 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
 
         {/* Where */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-gray-400">Where</label>
+          <label className="text-xs text-gray-400 font-medium">Where</label>
           <input
             type="text"
             value={source}
@@ -101,7 +101,7 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
 
         {/* Category */}
         <div className="flex flex-col gap-2">
-          <label className="text-xs text-gray-400">Category</label>
+          <label className="text-xs text-gray-400 font-medium">Category</label>
           <div className="flex gap-2 flex-wrap">
             {CATEGORY_LETTERS.map((letter) => {
               const cat = CATEGORIES[letter];
@@ -111,7 +111,7 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
                   key={letter}
                   type="button"
                   onClick={() => setCategory(letter)}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-full border text-sm font-medium transition-all"
+                  className="flex items-center gap-1.5 pl-2 pr-3 py-2 rounded-full border text-sm font-medium transition-all"
                   style={
                     isSelected
                       ? { backgroundColor: hexToRgba(cat.color, 0.4), color: cat.textColor, borderColor: cat.color }
@@ -128,7 +128,7 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
 
         {/* Amount */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-gray-400">Amount ($)</label>
+          <label className="text-xs text-gray-400 font-medium">Amount ($)</label>
           <input
             type="number"
             value={amount}
