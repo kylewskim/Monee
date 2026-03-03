@@ -52,7 +52,7 @@ export default function DashboardPage() {
 
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 pb-safe">
-      <div className="max-w-md mx-auto px-4 pt-6 pb-10 flex flex-col gap-6">
+      <div className="max-w-md mx-auto px-4 pt-6 pb-10 flex flex-col gap-2">
         {/* Budget Summary */}
         <div className="flex flex-col gap-2">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 px-1">
@@ -77,7 +77,9 @@ export default function DashboardPage() {
         )}
 
         {/* Entry Form */}
-        <EntryForm onSuccess={() => mutate()} />
+        <div className="mt-2">
+          <EntryForm onSuccess={() => mutate()} />
+        </div>
       </div>
     </main>
   );
