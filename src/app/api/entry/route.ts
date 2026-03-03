@@ -40,7 +40,6 @@ export async function POST(req: Request) {
     });
   } catch (err) {
     console.error("Entry write error:", err);
-    const msg = err instanceof Error ? err.message : "Failed to write entry";
-    return Response.json({ error: msg }, { status: 500 });
+    return Response.json({ error: "Failed to write entry" }, { status: 500 });
   }
 }

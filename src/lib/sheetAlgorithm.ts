@@ -71,17 +71,16 @@ export async function findNextEmptySlot(
   const values = await readSheetRange(accessToken, tabName, `${rangeStart}:${rangeEnd}`);
 
   let targetRow = entryStartRow;
-  let found = false;
   for (let i = 0; i < 5; i++) {
     const cellVal = values?.[i]?.[0];
     if (!cellVal || cellVal.toString().trim() === "") {
       targetRow = entryStartRow + i;
-      found = true;
       break;
     }
-  }
-  if (!found) {
-    throw new Error("This day is full (5 entries max). Please check the spreadsheet.");
+    if (i === 4) {
+      // All 5 rows filled — use the last one (overwrite)
+      targetRow = entryEndRow;
+    }
   }
 
   return { row: targetRow, col: colStart, tabName };

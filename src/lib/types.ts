@@ -7,33 +7,33 @@ export const CATEGORIES: Record<
 > = {
   F: {
     name: "Food",
-    badgeBg: "bg-green-100",
-    badgeText: "text-green-800",
-    barColor: "bg-green-400",
+    badgeBg: "bg-green-900/40",
+    badgeText: "text-green-300",
+    barColor: "bg-green-500",
   },
   S: {
     name: "Subscription",
-    badgeBg: "bg-blue-100",
-    badgeText: "text-blue-800",
-    barColor: "bg-blue-400",
+    badgeBg: "bg-blue-900/40",
+    badgeText: "text-blue-300",
+    barColor: "bg-blue-500",
   },
   C: {
     name: "Chulsu",
-    badgeBg: "bg-purple-100",
-    badgeText: "text-purple-800",
-    barColor: "bg-purple-400",
+    badgeBg: "bg-purple-900/40",
+    badgeText: "text-purple-300",
+    barColor: "bg-purple-500",
   },
   P: {
     name: "Personal",
-    badgeBg: "bg-orange-100",
-    badgeText: "text-orange-800",
-    barColor: "bg-orange-400",
+    badgeBg: "bg-orange-900/40",
+    badgeText: "text-orange-300",
+    barColor: "bg-orange-500",
   },
   O: {
     name: "Others",
-    badgeBg: "bg-gray-100",
-    badgeText: "text-gray-600",
-    barColor: "bg-gray-400",
+    badgeBg: "bg-zinc-700/60",
+    badgeText: "text-zinc-300",
+    barColor: "bg-zinc-400",
   },
 };
 
