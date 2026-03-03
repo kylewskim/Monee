@@ -71,7 +71,7 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-4"
+        className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-4 overflow-hidden"
       >
         {/* Date */}
         <div className="flex flex-col gap-1.5 overflow-hidden">
@@ -81,7 +81,7 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
             value={date}
             onChange={(e) => setDate(e.target.value)}
             required
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 h-11 text-gray-900 text-sm focus:outline-none focus:border-gray-400 transition-colors [color-scheme:light]"
+            className="w-full min-w-0 bg-gray-50 border border-gray-200 rounded-xl px-3 h-11 text-gray-900 text-sm focus:outline-none focus:border-gray-400 transition-colors [color-scheme:light]"
           />
         </div>
 
