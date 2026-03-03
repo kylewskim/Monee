@@ -31,6 +31,11 @@ body {
   padding-top: calc(env(safe-area-inset-top) + 1.5rem);
 }
 
+/* Fix iOS Safari date input text alignment */
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+}
+
 /* Remove number input spinners */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
