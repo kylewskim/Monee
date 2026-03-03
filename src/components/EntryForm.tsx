@@ -52,7 +52,7 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
         setAmount("");
         setDate(todayLocal());
         onSuccess();
-        setTimeout(() => setFeedback(null), 2500);
+        setTimeout(() => setFeedback(null), 3000);
       } else {
         setFeedback({ ok: false, msg: data.error ?? "Error" });
       }
@@ -65,9 +65,17 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="text-sm font-medium text-gray-500 px-1">
-        Add Entry
-      </h2>
+      <div className="flex items-center justify-between px-1">
+        <h2 className="text-sm font-medium text-gray-500">Add Entry</h2>
+        <a
+          href="https://docs.google.com/spreadsheets/d/1yhmZ5aD581tB6ZVUoVkVAeY_wP81-49Frnn4wkFeA1k"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs text-gray-400 underline underline-offset-2"
+        >
+          Open Spreadsheet
+        </a>
+      </div>
 
       <form
         onSubmit={handleSubmit}
@@ -111,7 +119,7 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
                   key={letter}
                   type="button"
                   onClick={() => setCategory(letter)}
-                  className="flex items-center gap-1.5 pl-2 pr-3 py-2 rounded-full border text-sm font-medium transition-all"
+                  className="flex items-center gap-1.5 pl-2 pr-3 py-2 rounded-xl border text-sm font-medium transition-all"
                   style={
                     isSelected
                       ? { backgroundColor: hexToRgba(cat.color, 0.4), color: cat.textColor, borderColor: cat.color }
@@ -146,21 +154,21 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
         <button
           type="submit"
           disabled={loading}
-          className="bg-gray-900 text-white font-semibold rounded-full py-3 text-sm active:scale-95 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+          className="font-semibold rounded-xl py-3 text-sm text-white active:scale-95 transition-all duration-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          style={
+            feedback
+              ? {
+                  background: feedback.ok
+                    ? "linear-gradient(90deg, #10b981, #34d399, #6ee7b7, #34d399, #10b981)"
+                    : "linear-gradient(90deg, #ef4444, #f87171, #fca5a5, #f87171, #ef4444)",
+                  backgroundSize: "300% 100%",
+                  animation: "btn-shimmer 1.8s linear infinite",
+                }
+              : { background: "#1f2937" }
+          }
         >
-          {loading ? "Saving..." : "Add"}
+          {loading ? "Saving..." : feedback ? feedback.msg : "Add"}
         </button>
-
-        {/* Feedback */}
-        {feedback && (
-          <p
-            className={`text-sm text-center font-medium ${
-              feedback.ok ? "text-green-600" : "text-red-500"
-            }`}
-          >
-            {feedback.msg}
-          </p>
-        )}
       </form>
     </div>
   );

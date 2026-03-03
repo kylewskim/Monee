@@ -46,6 +46,12 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+/* Add button shimmer feedback */
+@keyframes btn-shimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
 /* Sign-in page animations */
 @keyframes float {
   0%, 100% { transform: translateY(0px) rotate(-4deg); }
