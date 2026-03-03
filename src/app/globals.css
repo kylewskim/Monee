@@ -28,7 +28,7 @@ body {
   padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
 }
 .pt-safe {
-  padding-top: env(safe-area-inset-top);
+  padding-top: calc(env(safe-area-inset-top) + 1.5rem);
 }
 
 /* Remove number input spinners */

@@ -64,7 +64,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [showMonthPicker, setShowMonthPicker] = useState(false);
-  const [showBreakdown, setShowBreakdown] = useState(true);
+  const [showBreakdown, setShowBreakdown] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -90,7 +90,7 @@ export default function DashboardPage() {
 
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 pb-safe">
-      <div className="max-w-md mx-auto px-4 pt-6 pb-10 flex flex-col gap-2">
+      <div className="max-w-md mx-auto px-4 pt-safe pb-10 flex flex-col gap-2">
         {/* Budget Summary */}
         <div className="flex flex-col gap-2">
           {/* Month header row */}

@@ -30,8 +30,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
   viewportFit: "cover",
-  themeColor: "#000000",
+  themeColor: "#f9fafb",
 };
 
 export default function RootLayout({
@@ -40,7 +41,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="bg-black">
+    <html lang="en" className="bg-gray-50">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <SessionProvider>{children}</SessionProvider>
       </body>
