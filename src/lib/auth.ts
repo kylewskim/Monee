@@ -13,6 +13,8 @@ export const authOptions: NextAuthOptions = {
             "email",
             "profile",
             "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive.file",
+            "https://www.googleapis.com/auth/drive.readonly",
           ].join(" "),
           access_type: "offline",
           prompt: "consent",
@@ -29,12 +31,10 @@ export const authOptions: NextAuthOptions = {
         return token;
       }
 
-      // Return still-valid token
       if (Date.now() < (token.expiresAt as number) * 1000 - 60_000) {
         return token;
       }
 
-      // Refresh expired token
       try {
         const res = await fetch("https://oauth2.googleapis.com/token", {
           method: "POST",
@@ -60,6 +60,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       session.accessToken = token.accessToken as string;
       session.error = token.error as string | undefined;
+      session.spreadsheetId = token.spreadsheetId as string | undefined;
       return session;
     },
   },
@@ -69,11 +70,11 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-// Augment next-auth types
 declare module "next-auth" {
   interface Session {
     accessToken?: string;
     error?: string;
+    spreadsheetId?: string;
   }
 }
 declare module "next-auth/jwt" {
@@ -82,5 +83,6 @@ declare module "next-auth/jwt" {
     refreshToken?: string;
     expiresAt?: number;
     error?: string;
+    spreadsheetId?: string;
   }
 }

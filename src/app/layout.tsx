@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SessionProvider from "@/components/SessionProvider";
+import DevServiceWorkerReset from "@/components/DevServiceWorkerReset";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,6 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-gray-50">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <DevServiceWorkerReset />
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>

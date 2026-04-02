@@ -7,24 +7,40 @@ import useSWR from "swr";
 import BudgetSummary from "@/components/BudgetSummary";
 import CategoryBreakdown from "@/components/CategoryBreakdown";
 import EntryForm from "@/components/EntryForm";
-import type { MonthlySummary } from "@/lib/types";
+import SetupForm from "@/components/SetupForm";
+import type { BootstrapResponse, MonthlySummary } from "@/lib/types";
 
-const fetcher = (url: string) =>
-  fetch(url).then((r) => {
-    if (!r.ok) throw new Error("fetch error");
-    return r.json();
-  });
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const error = new Error(data.message ?? data.error ?? "fetch error");
+    throw error;
+  }
+  return data;
+};
 
 const MONTH_NAMES: Record<string, string> = {
-  Jan: "January", Feb: "February", Mar: "March",    Apr: "April",
-  May: "May",     Jun: "June",     Jul: "July",     Aug: "August",
-  Sep: "September", Oct: "October", Nov: "November", Dec: "December",
+  Jan: "January",
+  Feb: "February",
+  Mar: "March",
+  Apr: "April",
+  May: "May",
+  Jun: "June",
+  Jul: "July",
+  Aug: "August",
+  Sep: "September",
+  Oct: "October",
+  Nov: "November",
+  Dec: "December",
 };
-const MONTH_ABBRS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+const MONTH_ABBRS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 function formatMonth(tabName: string): string {
-  const [mon, year] = tabName.split("/");
-  return `${MONTH_NAMES[mon] ?? mon} ${year}`;
+  const match = tabName.match(/^([A-Za-z]{3})(\d{4})$/);
+  if (!match) return tabName;
+  return `${MONTH_NAMES[match[1]] ?? match[1]} ${match[2]}`;
 }
 
 function getMonthOptions(): string[] {
@@ -32,7 +48,7 @@ function getMonthOptions(): string[] {
   const now = new Date();
   for (let i = 0; i < 12; i++) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    options.push(`${MONTH_ABBRS[d.getMonth()]}/${d.getFullYear()}`);
+    options.push(`${MONTH_ABBRS[d.getMonth()]}${d.getFullYear()}`);
   }
   return options;
 }
@@ -44,6 +60,7 @@ function ChevronRight() {
     </svg>
   );
 }
+
 function ChevronDown() {
   return (
     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -51,6 +68,7 @@ function ChevronDown() {
     </svg>
   );
 }
+
 function ChevronUp() {
   return (
     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -62,6 +80,7 @@ function ChevronUp() {
 export default function DashboardPage() {
   const { status } = useSession();
   const router = useRouter();
+  const [timeZone, setTimeZone] = useState<string | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [showMonthPicker, setShowMonthPicker] = useState(false);
   const [showBreakdown, setShowBreakdown] = useState(false);
@@ -72,30 +91,70 @@ export default function DashboardPage() {
     }
   }, [status, router]);
 
-  const swrKey =
-    status === "authenticated"
+  useEffect(() => {
+    const browserTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    setTimeZone(browserTimeZone || "UTC");
+  }, []);
+
+  const {
+    data: bootstrap,
+    error: bootstrapError,
+    isLoading: bootstrapLoading,
+    mutate: mutateBootstrap,
+  } = useSWR<BootstrapResponse>(
+    status === "authenticated" && timeZone
+      ? `/api/bootstrap?tz=${encodeURIComponent(timeZone)}`
+      : null,
+    fetcher,
+    { refreshInterval: 60_000 }
+  );
+
+  const summaryKey =
+    status === "authenticated" && bootstrap?.status === "ready" && timeZone
       ? selectedMonth
-        ? `/api/summary?month=${encodeURIComponent(selectedMonth)}`
-        : "/api/summary"
+        ? `/api/summary?month=${encodeURIComponent(selectedMonth)}&tz=${encodeURIComponent(timeZone)}`
+        : `/api/summary?tz=${encodeURIComponent(timeZone)}`
       : null;
 
-  const { data: summary, error, isLoading, mutate } = useSWR<MonthlySummary>(swrKey, fetcher);
+  const {
+    data: summary,
+    error: summaryError,
+    isLoading: summaryLoading,
+    mutate: mutateSummary,
+  } = useSWR<MonthlySummary>(summaryKey, fetcher, {
+    refreshInterval: selectedMonth ? 0 : 60_000,
+  });
 
-  if (status === "loading" || status === "unauthenticated") {
+  if (status === "loading" || status === "unauthenticated" || !timeZone || bootstrapLoading) {
     return <LoadingScreen />;
   }
 
-  const displayMonth = selectedMonth ?? summary?.month;
+  if (bootstrapError) {
+    return <ErrorCard message="Couldn't bootstrap your sheet." onRetry={() => mutateBootstrap()} />;
+  }
+
+  if (!bootstrap) {
+    return <ErrorCard message="Missing bootstrap state." onRetry={() => mutateBootstrap()} />;
+  }
+
+  if (bootstrap.status === "needs_setup") {
+    return (
+      <main className="min-h-screen bg-gray-50 text-gray-900 pb-safe">
+        <div className="max-w-md mx-auto px-4 pt-safe pb-10">
+          <SetupForm onSuccess={() => mutateBootstrap()} timeZone={timeZone} />
+        </div>
+      </main>
+    );
+  }
+
+  const displayMonth = selectedMonth ?? summary?.month ?? bootstrap.currentMonth;
   const hasBreakdown = summary?.categories.some((c) => c.total > 0);
 
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900 pb-safe">
       <div className="max-w-md mx-auto px-4 pt-safe pb-10 flex flex-col gap-2">
-        {/* Budget Summary */}
         <div className="flex flex-col gap-2">
-          {/* Month header row */}
           <div className="flex items-center justify-between px-1">
-            {/* Month picker */}
             <div className="relative">
               <button
                 onClick={() => setShowMonthPicker(!showMonthPicker)}
@@ -115,7 +174,7 @@ export default function DashboardPage() {
                         setShowBreakdown(true);
                       }}
                       className={`w-full text-left px-3 py-2 text-sm transition-colors ${
-                        (selectedMonth ?? summary?.month) === month
+                        (selectedMonth ?? summary?.month ?? bootstrap.currentMonth) === month
                           ? "text-gray-900 font-medium bg-gray-50"
                           : "text-gray-500 hover:bg-gray-50"
                       }`}
@@ -127,7 +186,6 @@ export default function DashboardPage() {
               )}
             </div>
 
-            {/* Hide/Show breakdown — only when data exists */}
             {hasBreakdown && (
               <button
                 onClick={() => setShowBreakdown(!showBreakdown)}
@@ -139,16 +197,15 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {isLoading ? (
+          {summaryLoading ? (
             <SummarySkeleton />
-          ) : error ? (
-            <ErrorCard onRetry={() => mutate()} />
+          ) : summaryError ? (
+            <ErrorCard message="Couldn't load budget data." onRetry={() => mutateSummary()} />
           ) : summary ? (
             <BudgetSummary budget={summary.budget} used={summary.used} left={summary.left} />
           ) : null}
         </div>
 
-        {/* Category Breakdown — animated */}
         {hasBreakdown && summary && (
           <div
             className={`transition-all duration-300 ease-in-out overflow-hidden ${
@@ -159,9 +216,13 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Entry Form */}
         <div className="mt-4">
-          <EntryForm onSuccess={() => mutate()} />
+          <EntryForm
+            categories={bootstrap.config.categories}
+            slotLimit={bootstrap.config.slotLimit}
+            spreadsheetUrl={bootstrap.spreadsheetUrl}
+            onSuccess={() => mutateSummary()}
+          />
         </div>
       </div>
     </main>
@@ -186,10 +247,16 @@ function SummarySkeleton() {
   );
 }
 
-function ErrorCard({ onRetry }: { onRetry: () => void }) {
+function ErrorCard({
+  message,
+  onRetry,
+}: {
+  message: string;
+  onRetry: () => void;
+}) {
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-3 items-center text-center">
-      <p className="text-gray-500 text-sm">Couldn&apos;t load budget data.</p>
+      <p className="text-gray-500 text-sm">{message}</p>
       <button
         onClick={onRetry}
         className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full px-4 py-2 transition-colors"

@@ -84,7 +84,7 @@ export default function SignInPage() {
         </button>
 
         <p className="text-gray-400 text-xs text-center leading-relaxed">
-          We only access your Google Sheets to read and write budget entries.
+          We access Google Sheets and Drive file scope to create and update your Monee spreadsheet.
         </p>
       </div>
     </main>

@@ -1,18 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { CATEGORY_LETTERS, CATEGORIES, type CategoryLetter } from "@/lib/types";
+import { useEffect, useState } from "react";
+import type { CategoryConfig } from "@/lib/types";
+import { hexToRgba, getContrastingTextColor } from "@/lib/colors";
 import CategoryBadge from "./CategoryBadge";
 
 interface EntryFormProps {
+  categories: CategoryConfig[];
+  slotLimit: number;
+  spreadsheetUrl: string;
   onSuccess: () => void;
-}
-
-function hexToRgba(hex: string, alpha: number): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
 function todayLocal(): string {
@@ -23,18 +20,29 @@ function todayLocal(): string {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-export default function EntryForm({ onSuccess }: EntryFormProps) {
+export default function EntryForm({
+  categories,
+  slotLimit,
+  spreadsheetUrl,
+  onSuccess,
+}: EntryFormProps) {
   const [date, setDate] = useState(todayLocal());
   const [source, setSource] = useState("");
-  const [category, setCategory] = useState<CategoryLetter>("F");
+  const [category, setCategory] = useState(categories[0]?.code ?? "");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ ok: boolean; msg: string } | null>(null);
 
+  useEffect(() => {
+    if (!categories.some((c) => c.code === category)) {
+      setCategory(categories[0]?.code ?? "");
+    }
+  }, [categories, category]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const amt = parseFloat(amount);
-    if (!source.trim() || isNaN(amt) || amt <= 0) return;
+    const amt = Number(amount);
+    if (!source.trim() || !category || !Number.isFinite(amt) || amt <= 0) return;
 
     setLoading(true);
     setFeedback(null);
@@ -46,6 +54,7 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
         body: JSON.stringify({ date, source: source.trim(), category, amount: amt }),
       });
       const data = await res.json();
+
       if (res.ok) {
         setFeedback({ ok: true, msg: "Added!" });
         setSource("");
@@ -53,8 +62,10 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
         setDate(todayLocal());
         onSuccess();
         setTimeout(() => setFeedback(null), 3000);
+      } else if (res.status === 409 && data.error === "DAY_SLOT_FULL") {
+        setFeedback({ ok: false, msg: `This date is full (${slotLimit}/${slotLimit}).` });
       } else {
-        setFeedback({ ok: false, msg: data.error ?? "Error" });
+        setFeedback({ ok: false, msg: data.message ?? data.error ?? "Error" });
       }
     } catch {
       setFeedback({ ok: false, msg: "Network error" });
@@ -68,7 +79,7 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
       <div className="flex items-center justify-between px-1">
         <h2 className="text-sm font-medium text-gray-500">Add Entry</h2>
         <a
-          href="https://docs.google.com/spreadsheets/d/1yhmZ5aD581tB6ZVUoVkVAeY_wP81-49Frnn4wkFeA1k"
+          href={spreadsheetUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="text-xs text-gray-400 underline underline-offset-2"
@@ -81,7 +92,6 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
         onSubmit={handleSubmit}
         className="bg-white border border-gray-200 rounded-2xl p-4 flex flex-col gap-4 overflow-hidden"
       >
-        {/* Date */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs text-gray-400 font-medium">Date</label>
           <input
@@ -93,7 +103,6 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
           />
         </div>
 
-        {/* Where */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs text-gray-400 font-medium">Where</label>
           <input
@@ -107,26 +116,28 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
           />
         </div>
 
-        {/* Category */}
         <div className="flex flex-col gap-2">
           <label className="text-xs text-gray-400 font-medium">Category</label>
           <div className="flex gap-2 flex-wrap">
-            {CATEGORY_LETTERS.map((letter) => {
-              const cat = CATEGORIES[letter];
-              const isSelected = category === letter;
+            {categories.map((cat) => {
+              const isSelected = category === cat.code;
               return (
                 <button
-                  key={letter}
+                  key={cat.code}
                   type="button"
-                  onClick={() => setCategory(letter)}
+                  onClick={() => setCategory(cat.code)}
                   className="flex items-center gap-1.5 pl-2 pr-3 py-2 rounded-xl border text-sm font-medium transition-all"
                   style={
                     isSelected
-                      ? { backgroundColor: hexToRgba(cat.color, 0.4), color: cat.textColor, borderColor: cat.color }
+                      ? {
+                          backgroundColor: hexToRgba(cat.colorHex, 0.4),
+                          color: getContrastingTextColor(cat.colorHex),
+                          borderColor: cat.colorHex,
+                        }
                       : { backgroundColor: "white", color: "#9ca3af", borderColor: "#e5e7eb" }
                   }
                 >
-                  <CategoryBadge letter={letter} />
+                  <CategoryBadge code={cat.code} colorHex={cat.colorHex} />
                   <span>{cat.name}</span>
                 </button>
               );
@@ -134,7 +145,6 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
           </div>
         </div>
 
-        {/* Amount */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs text-gray-400 font-medium">Amount ($)</label>
           <input
@@ -150,7 +160,6 @@ export default function EntryForm({ onSuccess }: EntryFormProps) {
           />
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
           disabled={loading}
